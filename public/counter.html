@@ -1,47 +1,64 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Stats Counter</title>
-<style type="text/css">
-html {
-	background: #f1f1f1;
-}
-a {
-	color: #5783ad;
-}
-body {
-	background: #fff;
-	margin: 22px auto;
-	width: 744px;
-	padding: 22px;
-	text-align: center;
-	font-family: Georgia, "Times New Roman", Times, serif;
-	color: #464646;
-	-moz-border-radius: 20px;
-	-khtml-border-radius: 20px;
-	-webkit-border-radius: 20px;
-	border-radius: 20px;
-}
-h2 {
-	font-size: 3em;
-	font-weight: normal;
-}
-h1 {
-	font-size: 10em;
-	margin: 0 0 .4em 0;
-	font-weight: normal;
-	color: black;
-}
-</style>
-</head>
-
-<body>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Stats Counter</title>
+    <style type="text/css">
+      html {
+      	background: #f1f1f1;
+      }
+      a {
+      	color: #5783ad;
+      }
+      body {
+      	background: #fff;
+      	margin: 22px auto;
+      	width: 744px;
+      	padding: 22px;
+      	text-align: center;
+      	font-family: Georgia, "Times New Roman", Times, serif;
+      	color: #464646;
+      	-moz-border-radius: 20px;
+      	-khtml-border-radius: 20px;
+      	-webkit-border-radius: 20px;
+      	border-radius: 20px;
+      }
+      h2 {
+      	font-size: 3em;
+      	font-weight: normal;
+      }
+      h1 {
+      	font-size: 10em;
+      	margin: 0 0 .4em 0;
+      	font-weight: normal;
+      	color: black;
+      }
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
     
-<h2>WordPress 2.6 has been&nbsp;downloaded</h2>
+      var LiveStats = Class.create({
+        initialize: function(element) {
+          this.element = element;
+        },
 
-<h1>1,858,216</h1>
-<h2>times</h2>
+        poll: function(){
+          
+        }
+      })
+  
+      Event.observe(window, 'load', function(){
+        liveStats = new LiveStats('liveNumber');
+        new PeriodicalExecuter(liveStats.poll(), 3);        
+      })
+    </script>
+  </head>
 
-</body>
+  <body>
+    
+    <h2>Live number of hits:</h2>
+
+    <h1 id="liveNumber">Loading...</h1>
+
+  </body>
 </html>
