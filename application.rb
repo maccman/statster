@@ -17,7 +17,7 @@ class Stats < Merb::Controller
     end
     
     if params[:query]
-      conds << 'host = query'
+      conds << 'query = ?'
       args  << params[:query]
     end
     
@@ -26,14 +26,14 @@ class Stats < Merb::Controller
       args  << params[:time_period]
     elsif params[:time]
       conds << 'time_period = ?'
-      args  << Time.parse(params[:time]) / AppConfig.time_period rescue nil
+      args  << Time.parse(params[:time]).to_i / AppConfig.time_period rescue nil
     end
     
     args.insert(0, conds.join(' AND ')) if conds.any?
     
     if params[:count]
       count = Stat.count(args)
-      display count
+      return count.to_s
     else
       stats = Stat.all(args)
       display(stats)
