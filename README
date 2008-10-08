@@ -1,0 +1,26 @@
+Statster
+=======================
+
+Tired of waiting 24 hours for your Google Analytics stats?
+Want an API for your stats? Want total control?
+
+* Filters out bots
+* Lightweight and very fast
+* REST API
+
+Prerequisites
+=============
+* Merb
+
+Getting started
+===============
+Check out the config file - should be pretty self explanatory. 
+
+Add a call to the JavaScript stat.js (it will be generated the first time it's called), like this:
+<script type="text/javascript" src="http://stat.example.com/stats.js"></script>
+
+Contact
+=======
+alex@madebymany.co.uk
+ 
+Copyright (c) 2008 Made by Many Ltd, released under the MIT license

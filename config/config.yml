@@ -1,0 +1,43 @@
+:defaults: &defaults
+  
+  # Seconds interval to write to the db.
+  # The bigger this number, the less db load,
+  # but increases the amount of data that would
+  # be lost if we received a KILL
+  # (on exit we also try to do a write).
+  :write_period: 10
+  
+  # Only record stats that match this.
+  # :match_url is converted into a regex
+  :match_url: 
+  
+  # Controls granularity in seconds.
+  # Smaller time_period means more data (bigger db).
+  # The time_period below is 1 day.
+  :time_period: 86400
+  
+  # Controls session length in seconds.
+  # If you leave this blank the session will
+  # end when the browser window is closed.
+  :session_length: 
+
+  # Public address of this app.
+  :address: http://locahost:4000
+  
+  # Cookie used for sessions.
+  :cookie_name: booYaStats
+  
+  # Stop your own requests being logged:
+  :ip_blacklist:
+  #   - 127.0.0.1
+
+:development:
+  <<: *defaults
+
+:test:
+  <<: *defaults
+
+:production:
+  <<: *defaults
+  # You *will* need to change this:
+  :address: http://stats.example.com

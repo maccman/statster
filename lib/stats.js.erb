@@ -1,0 +1,53 @@
+var Stats = {
+  src: <%= AppConfig.address.inspect %>,
+  cookieName: <%= AppConfig.cookie_name.inspect %>,
+  
+  init: function(){
+    var unique = true;
+    if(this.hasCookie()){
+      unique = false;
+      this.setCookie();
+    }
+    this.recordHit(unique);
+  },
+  
+  hasCookie: function(){
+    return(this._readCookie(this.cookieName) ? true : false);
+  },
+  
+  setCookie: function(){
+    this._createCookie(this.cookieName, '1');
+  },
+  
+  recordHit: function(unique){
+    var img = new Image(1,1);
+    img.src = this.src + '?unique=' + unique;
+  },
+  
+  // Private
+  
+  _createCookie: function(name, value) {
+    <% if AppConfig.session_length %>
+      var date = new Date();
+      date.setTime(date.getTime()+(<%= AppConfig.session_length %> * 1000));
+      var expires = "; expires=" + date.toGMTString();
+      document.cookie = name + "=" + value + expires + "; path=/";
+    <% else %>
+  	  document.cookie = name + "=" + value + "; path=/";
+  	<% end %>
+  },
+
+  _readCookie: function(name) {
+  	var nameEQ = name + "=";
+  	var ca = document.cookie.split(';');
+  	for(var i=0;i < ca.length;i++) {
+  		var c = ca[i];
+  		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+  		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  	}
+  	return null;
+  }
+
+}
+
+Stats.init();
