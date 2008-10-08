@@ -26,7 +26,7 @@ class Stats < Merb::Controller
       args  << params[:time_period]
     elsif params[:time]
       conds << 'time_period = ?'
-      args  << Time.parse(params[:time]).to_i / AppConfig.time_period rescue nil
+      args  << Time.parse(params[:time]).to_i / (AppConfig.time_period + 1) rescue nil
     end
     
     args.insert(0, conds.join(' AND ')) if conds.any?

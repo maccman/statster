@@ -13,8 +13,8 @@
   
   # Controls granularity in seconds.
   # Smaller time_period means more data (bigger db).
-  # The time_period below is 1 day.
-  :time_period: 86400
+  # The time_period below is 1 hour.
+  :time_period: 3600
   
   # Controls session length in seconds.
   # If you leave this blank the session will
