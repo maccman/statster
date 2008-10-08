@@ -22,6 +22,7 @@
   :session_length: 
 
   # Public address of this app.
+  # You *will* need to change this:
   :address: http://locahost:4000
   
   # Cookie used for sessions.
@@ -39,5 +40,3 @@
 
 :production:
   <<: *defaults
-  # You *will* need to change this:
-  :address: http://stats.example.com
