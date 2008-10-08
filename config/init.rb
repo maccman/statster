@@ -22,6 +22,9 @@ Merb::Config.use { |c|
 
 $:.unshift(File.join(Merb.root, 'lib'))
 
+require 'string_ext'
+require 'array_ext'
+
 require 'app_config'
 AppConfig.load
 

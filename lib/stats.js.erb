@@ -3,9 +3,9 @@ var Statster = {
   cookieName: <%= AppConfig.cookie_name.inspect %>,
   
   init: function(){
-    var unique = true;
-    if(this.hasCookie()){
-      unique = false;
+    var unique = false;
+    if(!this.hasCookie()){
+      unique = true;
       this.setCookie();
     }
     this.recordHit(unique);

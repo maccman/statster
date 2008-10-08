@@ -23,7 +23,7 @@
 
   # Public address of this app.
   # You *will* need to change this:
-  :address: http://locahost:4000
+  :address: http://localhost:4000
   
   # Cookie used for sessions.
   :cookie_name: booYaStats

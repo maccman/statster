@@ -24,9 +24,12 @@ class Stats < Merb::Controller
     if params[:time_period]
       conds << 'time_period = ?'
       args  << params[:time_period]
+    elsif params[:time]
+      conds << 'time_period = ?'
+      args  << Time.parse(params[:time]) / AppConfig.time_period rescue nil
     end
     
-    args.insert(0, conds.join(' ')) if conds.any?
+    args.insert(0, conds.join(' AND ')) if conds.any?
     
     if params[:count]
       count = Stat.count(args)

@@ -39,17 +39,35 @@
     
       var LiveStats = Class.create({
         initialize: function(element) {
-          this.element = element;
+          this.element = $(element);
+        },
+        
+        predict: function(){
+          
         },
 
+        poll: function(){
+         new Ajax.Request('/stats?count=1') 
+        }
+      })
+      
+      var LiveGraph = Class.create({
+        initialize: function(element){
+          this.element = $(element);
+        }, 
+        
         poll: function(){
           
         }
       })
   
       Event.observe(window, 'load', function(){
-        liveStats = new LiveStats('liveNumber');
-        new PeriodicalExecuter(liveStats.poll(), 3);        
+        var liveStats = new LiveStats('liveNumber');
+        new PeriodicalExecuter(liveStats.predict(), 0.5);
+        new PeriodicalExecuter(liveStats.poll(), 5);
+        
+        var liveGraph = new LiveGraph('liveGraph');
+        new PeriodicalExecuter(liveGraph.poll(), 30);
       })
     </script>
   </head>
