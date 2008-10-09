@@ -38,8 +38,12 @@
     <script type="text/javascript" charset="utf-8">
     
       var LiveStats = Class.create({
-        initialize: function(element) {
-          this.element = $(element);
+        initialize: function(hit_element, visit_element) {
+          this.hit_element    = $(hit_element);
+          this.visit_element  = $(visit_element);
+          this.r_n = 0;
+          this.p_n = 0;
+          this.poll();
         },
         
         predict: function(){
@@ -47,9 +51,25 @@
         },
 
         poll: function(){
-         new Ajax.Request('/stats?count=1') 
+          var date = new Date();
+          var time = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+          var to_time = (date.getMonth() + 1) + '/' + (date.getDate() + 1) + '/' + date.getFullYear();
+          new Ajax.Request('/stats.json?time=' + time + '&to_time=' + to_time, {
+            method: 'get',
+            onSuccess: this.pollCallback.bind(this)
+          });
+        },
+        
+        pollCallback: function(t){
+          this.update(t.responseJSON.hits, t.responseJSON.visits);
+        },
+        
+        update: function(hits, visits){
+          this.r_n = hits;
+          this.hit_element.update(hits);
+          this.visit_element.update(visits);
         }
-      })
+      });
       
       var LiveGraph = Class.create({
         initialize: function(element){
@@ -59,15 +79,15 @@
         poll: function(){
           
         }
-      })
+      });
   
       Event.observe(window, 'load', function(){
-        var liveStats = new LiveStats('liveNumber');
-        new PeriodicalExecuter(liveStats.predict(), 0.5);
-        new PeriodicalExecuter(liveStats.poll(), 5);
+        var liveStats = new LiveStats('hits', 'visits');
+        new PeriodicalExecuter(liveStats.predict.bind(liveStats), 0.5);
+        new PeriodicalExecuter(liveStats.poll.bind(liveStats), 5);
         
         var liveGraph = new LiveGraph('liveGraph');
-        new PeriodicalExecuter(liveGraph.poll(), 30);
+        new PeriodicalExecuter(liveGraph.poll.bind(liveGraph), 30);
       })
     </script>
   </head>
@@ -76,7 +96,9 @@
     
     <h2>Live number of hits:</h2>
 
-    <h1 id="liveNumber">Loading...</h1>
+    <h1 id="hits">Loading...</h1>
+      
+    <h2>Visits: <span id="visits">Loading...</span></h2>
 
   </body>
 </html>

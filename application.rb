@@ -25,19 +25,23 @@ class Stats < Merb::Controller
       conds << 'time_period = ?'
       args  << params[:time_period]
     elsif params[:time]
-      conds << 'time_period = ?'
-      args  << Time.parse(params[:time]).to_i / (AppConfig.time_period + 1) rescue nil
+      if params[:to_time]
+        conds << 'time_period BETWEEN ? AND ?'
+        args  << convert_time(params[:time])
+        args  << convert_time(params[:to_time])
+      else
+        conds << 'time_period = ?'
+        args  << convert_time(params[:time])
+      end
     end
     
     args.insert(0, conds.join(' AND ')) if conds.any?
     
-    if params[:count]
-      count = Stat.count(args)
-      return count.to_s
-    else
-      stats = Stat.all(args)
-      display(stats)
-    end
+    result = IndexResult.new
+    result.hits   = Stat.sum(:hits,   args)
+    result.visits = Stat.sum(:visits, args)
+    
+    display result
   end
   
   def stats_file
@@ -54,7 +58,7 @@ class Stats < Merb::Controller
       request.remote_ip,
       request.user_agent, 
       request.referer,
-      !!params[:unique]
+      (params[:unique] == 'true')
     )
     run_later {
       Stat.commit! if Stat.needs_commit?
@@ -71,4 +75,32 @@ class Stats < Merb::Controller
     Stat.commit!
     ''
   end
+  
+  private
+  
+    class IndexResult
+      attr_accessor :visits,
+                    :hits
+      
+      def to_json
+        {
+          :visits => visits,
+          :hits   => hits
+        }.to_json
+      end
+      
+      def to_xml(options = {})
+        options[:indent] ||= 2
+        xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+        xml.instruct! unless options[:skip_instruct]
+        xml.stat do
+          xml.visits  visits
+          xml.hits    hits
+        end
+      end
+    end
+  
+    def convert_time(str)
+      Time.parse_utc(str).to_i / AppConfig.time_period rescue nil
+    end
 end

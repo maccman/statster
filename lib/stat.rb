@@ -7,7 +7,7 @@ class Stat
                   :query,
                   :time_period,
                   :unique
-                
+
     class << self
       def from_url(referer)
         record        = self.new
@@ -20,7 +20,7 @@ class Stat
     end
     
     def initialize
-      self.time_period = Time.now.to_i / AppConfig.time_period
+      self.time_period = Time.now.utc.to_i / AppConfig.time_period
     end
   end
   
@@ -49,6 +49,16 @@ class Stat
     
     def count(conds = [])
       sql = "SELECT COUNT(*) FROM stats"
+      if conds.any?
+        sql += " WHERE #{conds.shift}"
+        db.get_first_value(sql, conds).to_i
+      else
+        db.get_first_value(sql).to_i
+      end
+    end
+    
+    def sum(col, conds = [])
+      sql = "SELECT SUM(#{col}) FROM stats"
       if conds.any?
         sql += " WHERE #{conds.shift}"
         db.get_first_value(sql, conds).to_i
@@ -103,9 +113,9 @@ class Stat
           sql = []
           sql << 'UPDATE stats'
           if record.unique
-            sql << 'SET visits = visits + 1, unique_visits = unique_visits + 1'
+            sql << 'SET hits = hits + 1, visits = visits + 1'
           else
-            sql << 'SET visits = visits + 1'
+            sql << 'SET hits = hits + 1'
           end
           sql << 'WHERE host = ? AND path = ? AND query = ? AND time_period = ?'
           db.execute(
@@ -130,8 +140,8 @@ class Stat
         stat.host           = ar[0]
         stat.path           = ar[1]
         stat.query          = ar[2]
-        stat.visits         = ar[3].to_i
-        stat.unique_visits  = ar[4].to_i
+        stat.hits           = ar[3].to_i
+        stat.visits         = ar[4].to_i
         stat.time_period    = ar[5].to_i
         stat
       end
@@ -166,8 +176,8 @@ class Stat
               'host'           VARCHAR(255),
               'path'           VARCHAR(255),
               'query'          VARCHAR(255),
+              'hits'           INTEGER DEFAULT 0,
               'visits'         INTEGER DEFAULT 0,
-              'unique_visits'  INTEGER DEFAULT 0,
               'time_period'    INTEGER UNIQUE ON CONFLICT IGNORE NOT NULL
             ) 
           })
@@ -198,23 +208,9 @@ class Stat
   attr_accessor :host,
                 :path, 
                 :query,
+                :hits,
                 :visits,
-                :unique_visits,
                 :time_period
-                
-  def to_xml(options = {})
-    options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-    xml.instruct! unless options[:skip_instruct]
-    xml.stat do
-      xml.host          host
-      xml.path          path
-      xml.query         query
-      xml.visits        visits
-      xml.unique_visits unique_visits
-      xml.time_period   time_period
-    end
-  end
 end
 
 END { Stat.commit! }
