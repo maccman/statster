@@ -37,10 +37,13 @@ class Stats < Merb::Controller
     
     args.insert(0, conds.join(' AND ')) if conds.any?
     
-    result = IndexResult.new
-    result.hits   = Stat.sum(:hits,   args)
-    result.visits = Stat.sum(:visits, args)
-    
+    if params[:sum]
+      result        = SumResult.new
+      result.hits   = Stat.sum(:hits,   args)
+      result.visits = Stat.sum(:visits, args)
+    else
+      result = Stat.all(args)
+    end
     display result
   end
   
@@ -78,16 +81,9 @@ class Stats < Merb::Controller
   
   private
   
-    class IndexResult
+    class SumResult
       attr_accessor :visits,
                     :hits
-      
-      def to_json
-        {
-          :visits => visits,
-          :hits   => hits
-        }.to_json
-      end
       
       def to_xml(options = {})
         options[:indent] ||= 2
@@ -97,6 +93,13 @@ class Stats < Merb::Controller
           xml.visits  visits
           xml.hits    hits
         end
+      end
+      
+      def to_json
+        {
+          :visits => visits,
+          :hits   => hits
+        }.to_json
       end
     end
   

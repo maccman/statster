@@ -11,7 +11,6 @@ Merb::Config.use { |c|
   c[:environment]         = 'production',
   c[:framework]           = {},
   c[:log_level]           = :debug,
-  c[:log_file]            = Merb.log_path + "/production.log"
   c[:use_mutex]           = false,
   c[:session_store]       = 'none',
   c[:exception_details]   = false,
@@ -24,6 +23,7 @@ $:.unshift(File.join(Merb.root, 'lib'))
 
 require 'string_ext'
 require 'time_ext'
+require 'array_ext'
 
 require 'builder'
 

@@ -41,8 +41,10 @@
         initialize: function(hit_element, visit_element) {
           this.hit_element    = $(hit_element);
           this.visit_element  = $(visit_element);
-          this.r_n = 0;
-          this.p_n = 0;
+          this.real_n     = 0; // real number
+          this.pred_n     = 0; // predicted number
+          this.refresh    = 0.5; // refresh interval
+          this.increment  = 0;
           this.poll();
         },
         
@@ -54,19 +56,23 @@
           var date = new Date();
           var time = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
           var to_time = (date.getMonth() + 1) + '/' + (date.getDate() + 1) + '/' + date.getFullYear();
-          new Ajax.Request('/stats.json?time=' + time + '&to_time=' + to_time, {
+          new Ajax.Request('/stats.json?sum=1&time=' + time + '&to_time=' + to_time, {
             method: 'get',
             onSuccess: this.pollCallback.bind(this)
           });
         },
         
         pollCallback: function(t){
-          this.update(t.responseJSON.hits, t.responseJSON.visits);
+          this.real_n = t.responseJSON.hits;
+          this.updateHits(t.responseJSON.hits);
+          this.updateVisits(t.responseJSON.visits);
         },
         
-        update: function(hits, visits){
-          this.r_n = hits;
+        updateHits: function(hits){
           this.hit_element.update(hits);
+        },
+        
+        updateVisits: function(visits){
           this.visit_element.update(visits);
         }
       });

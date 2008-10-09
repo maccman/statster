@@ -211,6 +211,32 @@ class Stat
                 :hits,
                 :visits,
                 :time_period
+                
+                
+  def to_xml(options = {})
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml.stat do
+      xml.host          host
+      xml.path          path
+      xml.query         query
+      xml.hits          hits
+      xml.visits        visits
+      xml.time_period   time_period
+    end
+  end
+  
+  def to_json
+    {
+      :host         => host,
+      :path         => path,
+      :query        => query,
+      :hits         => hits,
+      :visits       => visits,
+      :time_period  => time_period
+    }.to_json
+  end
 end
 
 END { Stat.commit! }
